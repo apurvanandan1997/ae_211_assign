@@ -2,23 +2,22 @@
 %Example 3.19 of Fundamentals of Aerodynamics by J.D. Anderson
 %Code by: Dr. Bilal A. Siddiqui,
 %Asst. Prof., Mechanical Engineering, DHA Suffa University
-clc; clear all; close all;
+clc; clear all;
 syms y(x)
 
 y(x) = piecewise((-17.54/0.9)<=x & x<=-8 , -0.5 *(.9*x + 17.54).^2, -8<x & x<0, -0.6*(1.1*x + 7.5).^2 - 52.4438, 0<=x & x<8,-0.6*(-1.1*x + 7.5).^2 - 52.4438, (8<=x & x<=17.54/0.9), -0.5*(-.9*x + 17.54).^2);
 
 Vinf=30;
-n=500;%number of panels
-dx=-2*17.54/(0.9*(n-14));
+n=65;%number of panels
+dx=2*17.54/(0.9*(n-14));
 alfa=0;%angle of attack;
-X=17.54/0.9:dx:-17.54/0.9;
+X=-17.54/0.9:dx:17.54/0.9;
 Y=[];
 for itr=1:length(X)
     Y(itr)=y(X(itr));
 end
-
-X=[0,1,2,2.1,5,7,8,X,-8, -7, -5, -2.1, -2, -1, 0];
-Y=[-9,-10,5,-68.5/3,-18,-11,-0.1,Y,-0.1,-11,-18,-68.5/3, 5,-10,-9];
+X=[0,-1,-2,-2.1,-5,-7,-8,X,8, 7, 5, 2.1, 2, 1, 0];
+Y=[-9,-10,5,-68.5/3,-18,-11,0,Y,0,-11,-18,-68.5/3, 5,-10,-9];
 
 for index=1:n
     %angle of flow with tangent of panel
@@ -53,8 +52,8 @@ for p=1:n
     end
     F(p,1)=Vinf*cos(beta(p));
 end
-% I(7,25)=0.11;
-% I(25,7)=0.11;
+I(7,25)=0.11;
+I(25,7)=0.11;
 M=I/2/pi+eye(n)/2;
 
 lambda=-inv(M)*F;
@@ -65,7 +64,7 @@ V=Vinf*sin(beta)+lambda'/2/pi*J';
 
 syms y1_graph(x);
 syms y2_graph(x);
-y1_graph(x) = piecewise((-17.54/0.9)<=x & x<-8 , 0.1/(-17.54/0.9+8)*(x+8)-0.1, -8<=x & x<-7, -11*x-88, -7<=x & x<-5,-3.5*(x+7)-11, -5<=x & x<-2.1, -5/3*(x+5)-18,-2.1<=x & x <-2,835/3*x-68.5/3+584.5 , -2<=x & x<-1,-15 *(x+1) - 10,-1<=x & x<0,-(-x - 1) - 10, (17.54/0.9)>=x & x>8 , 0.1/(17.54/0.9-8)*(x-8)-0.1, 8>=x & x>7, 11*x-88, 7>=x & x>5,-3.5*(-x+7)-11, 5>=x & x>2.1, -5/3*(-x+5)-18,2<x & x <=2.1,-835/3*x-68.5/3+584.5,2>x & x>1,-15 *(-x+1)-10,1>=x & x>=0,-(x - 1) - 10);
+y1_graph(x) = piecewise((-17.54/0.9)<=x & x<-8 , 0, -8<=x & x<-7, -11*x-88, -7<=x & x<-5,-3.5*(x+7)-11, -5<=x & x<-2.1, -5/3*(x+5)-18,-2.1<=x & x <-2,835/3*x-68.5/3+584.5 , -2<=x & x<-1,-15 *(x+1) - 10,-1<=x & x<0,-(-x - 1) - 10, (17.54/0.9)>=x & x>8 , 0, 8>=x & x>7, 11*x-88, 7>=x & x>5,-3.5*(-x+7)-11, 5>=x & x>2.1, -5/3*(-x+5)-18,2<x & x <=2.1,-835/3*x-68.5/3+584.5,2>x & x>1,-15 *(-x+1)-10,1>=x & x>=0,-(x - 1) - 10);
 y2_graph(x) = piecewise((-17.54/0.9)<=x & x<=-8 , -0.5 *(.9*x + 17.54).^2, -8<x & x<0, -0.6*(1.1*x + 7.5).^2 - 52.4438, 0<=x & x<8,-0.6*(-1.1*x + 7.5).^2 - 52.4438, (8<=x & x<=17.54/0.9), -0.5*(-.9*x + 17.54).^2);
 figure(1)
 hold on
@@ -76,10 +75,10 @@ h(3) = plot(X,Y,'r','DisplayName','Panel approximation');
 h(4) = plot(midpoint_x,midpoint_y,'g^','DisplayName','Control Points');
 legend(h(2:4));
 hold off;
-figure(2)
-Cp=1-(V/Vinf).^2;
-angles=min(beta):0.01:max(beta);
-Cp_exact=1-4*sin(angles).^2;
-
-plot(beta,Cp,'r^');grid;
-legend('C_p (Source Panel Method)');
+% figure(2)
+% Cp=1-(V/Vinf).^2;
+% angles=min(beta):0.01:max(beta);
+% Cp_exact=1-4*sin(angles).^2;
+% 
+% plot(beta,Cp,'r^');grid;
+% legend('C_p (Source Panel Method)');

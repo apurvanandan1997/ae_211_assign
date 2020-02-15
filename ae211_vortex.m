@@ -3,13 +3,16 @@ clear all;
 syms y(x)
 
 y(x) = piecewise((-17.54/0.9)<=x & x<=-8 , -0.5 *(.9*x + 17.54).^2, -8<x & x<0, -0.6*(1.1*x + 7.5).^2 - 52.4438, 0<=x & x<8,-0.6*(-1.1*x + 7.5).^2 - 52.4438, (8<=x & x<=17.54/0.9), -0.5*(-.9*x + 17.54).^2);
-n=1000;
-dx=2*17.54/(0.9*n);
+n=18;%number of panels
+dx=2*17.54/(0.9*(n-14));
+alfa=5;%angle of attack;
 XB=-17.54/0.9:dx:17.54/0.9;
 YB=[];
 for itr=1:length(XB)
     YB(itr)=y(XB(itr));
 end
+XB=[0,-1,-2,-2.1,-5,-7,-8,XB,8, 7, 5, 2.1, 2, 1, 0];
+YB=[-9,-10,5,-68.5/3,-18,-11,0,YB,0,-11,-18,-68.5/3, 5,-10,-9];
 % data        = load('naca0012_160cos.txt'); %Load Airfoil Coordianted from http://airfoiltools.com/airfoil/naca4digit
 % XB          = flip(data(:,1));
 % YB          = flip(data(:,2));
@@ -91,7 +94,7 @@ end
 
 figure(1)
 plot(X,CP);
-set(gca,'Ydir','reverse');
+set(gca,'Ydir');
 xlabel('x/c');
 ylabel('Coefficient of Pressure');
 grid on;
