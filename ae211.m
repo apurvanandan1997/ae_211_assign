@@ -7,9 +7,9 @@
 clc; clear all; close all;
 
 Vinf=30;
-n=100;%number of panels
-alfa=0;%angle of attack;
-
+n=500;%number of panels
+alpha=0;%angle of attack;
+alpha = alpha*pi/180;
 syms y(x)
 y(x) = piecewise((-17.54/0.9)<=x & x<=-8 , -0.5 *(.9*x + 17.54).^2, -8<x & x<0, -0.6*(1.1*x + 7.5).^2 - 52.4438, 0<=x & x<8,-0.6*(-1.1*x + 7.5).^2 - 52.4438, (8<=x & x<=17.54/0.9), -0.5*(-.9*x + 17.54).^2);
 
@@ -27,7 +27,7 @@ Y=[-9,-10,5,-68.5/3,-18,-11,-0.1,Y,-0.1,-11,-18,-68.5/3, 5,-10,-9]';
 %% Calculation of control points and other geometric parameters
 for index=1:n
     %angle of flow with tangent of panel
-    phi(index)=-alfa+atan2((Y(index+1)-Y(index)),(X(index+1)-X(index)));
+    phi(index)=-alpha+atan2((Y(index+1)-Y(index)),(X(index+1)-X(index)));
     %angle of flow with normal of panel
     beta(index)=phi(index)+pi/2;
     RHS(index)=sin(phi(index));
