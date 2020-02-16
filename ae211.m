@@ -1,4 +1,5 @@
-%% Source & Vortex Panel Method for Batman Knife Shape
+%% Source & Vortex Panel Method for Batman Knife Shape 
+% (https://www.throwninjastar.com/wp-content/uploads/2017/04/batman-throwing-star.jpg)
 %Code by: Dr. Bilal A. Siddiqui(Asst. Prof., Mechanical Engineering, DHA Suffa University) & Deepak Prem
 %% Edited by: Apurva Nandan, Devendra Kharolia, Pranay Agrawal, Rahul Baudhh, Parag Sonkusare
 %% Group III
@@ -60,13 +61,28 @@ for p=1:n
     F(p,1)=Vinf*cos(beta(p));
 end
 
+
+% vec_integral = @( (((x - (panel.xa - math.sin(panel.beta) * s)) * dxdz + (y - (panel.ya + math.cos(panel.beta) * s)) * dydz) / ((x - (panel.xa - math.sin(panel.beta) * s))**2 + (y - (panel.ya + math.cos(panel.beta) * s))**2) )
+% u = freestream.u_inf * math.cos(freestream.alpha) * numpy.ones_like(X, dtype=float)
+%     v = freestream.u_inf * math.sin(freestream.alpha) * numpy.ones_like(X, dtype=float)
+% 
+%     vec_intregral = numpy.vectorize(integral)
+%      for i=1:n
+%         u = lambda(i) / (2.0 * pi) * (meshx - (X(i) - sin(beta(i)) * S(i)) )/ ((meshx - (X(i) - sin(beta(i)) * S(i))).^2 + (meshy - (Y(i) + cos(beta(i) * S(i))).^2)); 
+       % v = v + panel.sigma / (2.0 * pi) * vec_intregral(X, Y, panel, 0.0, 1.0)
 M=I/2/pi+eye(n)/2;
 
 lambda=-inv(M)*F;
-fprintf('The sum of all sources by Source Panel Method is %f \n',lambda'*S');%check sum
+fprintf('The sum of all sources by Source Panel Method is %f \n',sum(dot(lambda,S')));%check sum
+
+% phi_fx = @(x,y,i) lambda(i).*ln(sqrt((x-midpoint_x).^2+(y-midpoint_y).^2))*S(i);
+% meshx = -30:0.1:30;
+% meshy = -100:0.1:10;
+% [meshX,meshY] = meshgrid(meshx,meshy);
 
 %Recoving velocity at the nodes
 V=Vinf*sin(beta)+lambda'/2/pi*J';
+Cp=1-(V/Vinf).^2;
 
 %% The Vortex Panel Method
 for i = 1:n
@@ -115,22 +131,17 @@ RHS(n+1) = 0;
 % Solve for Gamma and velocity/pressure
 Gama = AN\(RHS');                                  % Solving for a syetem of linear equations
 for i = 1:n
-    V(i) = cos(phi(i));
+    V2(i) = cos(phi(i));
     for j = 1:n+1
-        V(i) = V(i) + AT(i,j)*Gama(j);
-        CP(i) = 1 - (V(i))^2;
+        V2(i) = V2(i) + AT(i,j)*Gama(j);
+        CP(i) = 1 - (V2(i))^2;
     end
 end
-
+% CP = [flip(CP(1:((n)/2))) CP((((n)/2)+1):end)];
+circulation = sum(dot(Gama(1:n),S'));
+fprintf('The circulation associated with the shape by Vortex Panel Method is %f \n',circulation);
 % Calculation of Lift Coefficient
-CPl = CP(1:((n)/2));
-CPl = flip(CPl);
-CPu = CP((((n)/2)+1):end);
-
-dCP = CPl - CPu;
-dx = midpoint_x((((n)/2)+1):end);
-Cl = trapz(dx,dCP);
-fprintf('The lift coefficient of the shape evaluates to be %e by Vortex Panel Method\n',Cl);
+fprintf('The lift coefficient of the shape evaluates to be %f by Vortex Panel Method\n',circulation/Vinf/17.54*0.9);
 
 %% Plotting all the data
 syms y1_graph(x);
@@ -147,15 +158,11 @@ h(4) = plot(midpoint_x,midpoint_y,'g^','DisplayName','Control Points');
 grid on;
 grid minor;
 legend(h(2:4));
-% figure(2)
-% Cp=1-(V/Vinf).^2;
-% angles=min(beta):0.01:max(beta);
-% Cp_exact=1-4*sin(angles).^2;
-% 
-% plot(beta,Cp,'r^');grid;
-% legend('C_p (Source Panel Method)');
-figure(2);
-plot(midpoint_x,CP);
+figure(2)
+plot(midpoint_x,Cp,'r^');grid;
+legend('C_p (Source Panel Method)');
+figure(3);
+plot(midpoint_x,CP,'b^');
 % set(gca,'Ydir');
 title('Cp Variation over the surface by Vortex Panel Method');
 xlabel('X-coordinate');

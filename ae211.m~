@@ -1,4 +1,5 @@
-%% Source & Vortex Panel Method for Batman Knife Shape
+%% Source & Vortex Panel Method for Batman Knife Shape 
+% (https://www.throwninjastar.com/wp-content/uploads/2017/04/batman-throwing-star.jpg)
 %Code by: Dr. Bilal A. Siddiqui(Asst. Prof., Mechanical Engineering, DHA Suffa University) & Deepak Prem
 %% Edited by: Apurva Nandan, Devendra Kharolia, Pranay Agrawal, Rahul Baudhh, Parag Sonkusare
 %% Group III
@@ -7,9 +8,9 @@
 clc; clear all; close all;
 
 Vinf=30;
-n=100;%number of panels
-alfa=0;%angle of attack;
-
+n=500;%number of panels
+alpha=5;%angle of attack;
+alpha = alpha*pi/180;
 syms y(x)
 y(x) = piecewise((-17.54/0.9)<=x & x<=-8 , -0.5 *(.9*x + 17.54).^2, -8<x & x<0, -0.6*(1.1*x + 7.5).^2 - 52.4438, 0<=x & x<8,-0.6*(-1.1*x + 7.5).^2 - 52.4438, (8<=x & x<=17.54/0.9), -0.5*(-.9*x + 17.54).^2);
 
@@ -27,7 +28,7 @@ Y=[-9,-10,5,-68.5/3,-18,-11,-0.1,Y,-0.1,-11,-18,-68.5/3, 5,-10,-9]';
 %% Calculation of control points and other geometric parameters
 for index=1:n
     %angle of flow with tangent of panel
-    phi(index)=-alfa+atan2((Y(index+1)-Y(index)),(X(index+1)-X(index)));
+    phi(index)=-alpha+atan2((Y(index+1)-Y(index)),(X(index+1)-X(index)));
     %angle of flow with normal of panel
     beta(index)=phi(index)+pi/2;
     RHS(index)=sin(phi(index));
@@ -60,13 +61,28 @@ for p=1:n
     F(p,1)=Vinf*cos(beta(p));
 end
 
+
+% vec_integral = @( (((x - (panel.xa - math.sin(panel.beta) * s)) * dxdz + (y - (panel.ya + math.cos(panel.beta) * s)) * dydz) / ((x - (panel.xa - math.sin(panel.beta) * s))**2 + (y - (panel.ya + math.cos(panel.beta) * s))**2) )
+% u = freestream.u_inf * math.cos(freestream.alpha) * numpy.ones_like(X, dtype=float)
+%     v = freestream.u_inf * math.sin(freestream.alpha) * numpy.ones_like(X, dtype=float)
+% 
+%     vec_intregral = numpy.vectorize(integral)
+%     for i=1:n
+%         u = u + panel.sigma / (2.0 * pi) * (x - (X(i) - sin(beta(i)) * S(i)) 
+%         v = v + panel.sigma / (2.0 * pi) * vec_intregral(X, Y, panel, 0.0, 1.0)
 M=I/2/pi+eye(n)/2;
 
 lambda=-inv(M)*F;
-fprintf('The sum of all sources is %f \n',lambda'*S');%check sum
+fprintf('The sum of all sources by Source Panel Method is %f \n',sum(dot(lambda,S')));%check sum
 
+phi_fx = @(x,y,i) lambda(i).*ln(sqrt((x-midpoint_x).^2+(y-midpoint_y).^2))*S(i);
+meshx = -30:0.1:30;
+meshy = -100:0.1:10;
+[meshX,meshY] = meshgrid(meshx,meshy);
+streamline(meshX,meshY,startx,starty,startz)
 %Recoving velocity at the nodes
 V=Vinf*sin(beta)+lambda'/2/pi*J';
+Cp=1-(V/Vinf).^2;
 
 %% The Vortex Panel Method
 for i = 1:n
@@ -115,24 +131,19 @@ RHS(n+1) = 0;
 % Solve for Gamma and velocity/pressure
 Gama = AN\(RHS');                                  % Solving for a syetem of linear equations
 for i = 1:n
-    V(i) = cos(phi(i));
+    V2(i) = cos(phi(i));
     for j = 1:n+1
-        V(i) = V(i) + AT(i,j)*Gama(j);
-        CP(i) = 1 - (V(i))^2;
+        V2(i) = V2(i) + AT(i,j)*Gama(j);
+        CP(i) = 1 - (V2(i))^2;
     end
 end
-
+% CP = [flip(CP(1:((n)/2))) CP((((n)/2)+1):end)];
+circulation = sum(dot(Gama(1:n),S'));
+fprintf('The circulation associated with the shape by Vortex Panel Method is %f \n',circulation);
 % Calculation of Lift Coefficient
-CPl = CP(1:((n)/2));
-CPl = flip(CPl);
-CPu = CP((((n)/2)+1):end);
+fprintf('The lift coefficient of the shape evaluates to be %f by Vortex Panel Method\n',circulation/Vinf/17.54*0.9);
 
-dCP = CPl - CPu;
-dx = midpoint_x((((n)/2)+1):end);
-Cl = trapz(dx,dCP);
-fprintf('The lift coefficient of the shape evaluates to be %f \n',Cl);
-
-%% Plotting 
+%% Plotting all the data
 syms y1_graph(x);
 syms y2_graph(x);
 y1_graph(x) = piecewise((-17.54/0.9)<=x & x<-8 , 0.1/(-17.54/0.9+8)*(x+8)-0.1, -8<=x & x<-7, -11*x-88, -7<=x & x<-5,-3.5*(x+7)-11, -5<=x & x<-2.1, -5/3*(x+5)-18,-2.1<=x & x <-2,835/3*x-68.5/3+584.5 , -2<=x & x<-1,-15 *(x+1) - 10,-1<=x & x<0,-(-x - 1) - 10, (17.54/0.9)>=x & x>8 , 0.1/(17.54/0.9-8)*(x-8)-0.1, 8>=x & x>7, 11*x-88, 7>=x & x>5,-3.5*(-x+7)-11, 5>=x & x>2.1, -5/3*(-x+5)-18,2<x & x <=2.1,-835/3*x-68.5/3+584.5,2>x & x>1,-15 *(-x+1)-10,1>=x & x>=0,-(x - 1) - 10);
@@ -147,17 +158,14 @@ h(4) = plot(midpoint_x,midpoint_y,'g^','DisplayName','Control Points');
 grid on;
 grid minor;
 legend(h(2:4));
-% figure(2)
-% Cp=1-(V/Vinf).^2;
-% angles=min(beta):0.01:max(beta);
-% Cp_exact=1-4*sin(angles).^2;
-% 
-% plot(beta,Cp,'r^');grid;
-% legend('C_p (Source Panel Method)');
-figure(2);
-plot(midpoint_x,CP);
+figure(2)
+plot(midpoint_x,Cp,'r^');grid;
+legend('C_p (Source Panel Method)');
+figure(3);
+plot(midpoint_x,CP,'b^');
 % set(gca,'Ydir');
-xlabel('x/c');
+title('Cp Variation over the surface by Vortex Panel Method');
+xlabel('X-coordinate');
 ylabel('Coefficient of Pressure');
 grid on;
 grid minor;
