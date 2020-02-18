@@ -29,7 +29,7 @@ Y=[-9,-10,5,-68.5/3,-18,-11,-0.1,Y,-0.1,-11,-18,-68.5/3, 5,-10,-9]';
 %% Calculation of control points and other geometric parameters
 for index=1:n
     %angle of flow with tangent of panel
-    phi(index)=atan2((Y(index+1)-Y(index)),(X(index+1)-X(index)));
+    phi(index)=-alpha+atan2((Y(index+1)-Y(index)),(X(index+1)-X(index)));
     %angle of flow with normal of panel
     beta(index)=phi(index)+pi/2;
     RHS(index)=sin(phi(index));
@@ -68,7 +68,7 @@ lambda=-inv(M)*F;
 V=Vinf*sin(beta)+lambda'/2/pi*(J)';
 Cp=1-(V/Vinf).^2;
 
-fprintf('The sum of all sources by Source Panel Method is %f \n', sum(lambda.*(S')));
+fprintf('The sum of all sources by Source Panel Method is %f \n', sum(lambda'.*S));
 
 %% The Vortex Panel Method
 for i = 1:n
