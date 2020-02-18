@@ -12,7 +12,7 @@ Vinf=100;
 n=500;%number of panels (n>16)
 alpha=0;%angle of attack;
 alpha = alpha*pi/180;
-shape = 'batman';%'batman' or 'cylind' 
+shape = 'cylind';%'batman' or 'cylinder' 
 
 if(shape=='batman') 
     syms y(x)
@@ -154,10 +154,7 @@ if(shape=='batman')
     h(3) = plot(X,Y,'r','DisplayName','Panel approximation');
     h(4) = plot(midpoint_x,midpoint_y,'g^','DisplayName','Control Points');
 else
-    ang=0:0.01:2*pi; 
-    cir_x=R*cos(ang);
-    cir_y=R*sin(ang);
-    h(2) = plot(cir_y, cir_x, 'black','DisplayName','Exact Shape');
+    h(2) = ;
     h(3) = plot(X,Y,'r','DisplayName','Panel approximation');
     h(4) = plot(midpoint_x,midpoint_y,'g^','DisplayName','Control Points');
 end
