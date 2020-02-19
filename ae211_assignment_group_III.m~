@@ -11,7 +11,7 @@
 clc; clear all; close all;
 shape = 'batman'; % 'batman' or 'cylind' 
 
-n = 51; % number of panels (n>16)
+n = 500; % number of panels (n>16)
 Vinf=100;
 alpha=0; % angle of attack;
 alpha = alpha*pi/180;
@@ -68,7 +68,7 @@ for p=1:n
         
 	    % Integration Coefficients
         A=-(xi-Xj)*cos(phi(index))-(yi-Yj)*sin(phi(index));
-        B=(xi-Xj)^2+(yi-Yj)^2;
+        B=(xi-Xj)^2+(yi-Yj)^2;  
         C=sin(phi(p)-phi(index));
         D=(yi-Yj)*cos(phi(p))-(xi-Xj)*sin(phi(p));
         E=sqrt(B-A^2);
@@ -166,8 +166,6 @@ syms y1_graph(x);
 syms y2_graph(x);
 y1_graph(x) = piecewise((-17.54/0.9)<=x & x<-8 , 0.1/(-17.54/0.9+8)*(x+8)-0.1, -8<=x & x<-7, -11*x-88, -7<=x & x<-5,-3.5*(x+7)-11, -5<=x & x<-2.1, -5/3*(x+5)-18,-2.1<=x & x <-2,835/3*x-68.5/3+584.5 , -2<=x & x<-1,-15 *(x+1) - 10,-1<=x & x<0,-(-x - 1) - 10, (17.54/0.9)>=x & x>8 , 0.1/(17.54/0.9-8)*(x-8)-0.1, 8>=x & x>7, 11*x-88, 7>=x & x>5,-3.5*(-x+7)-11, 5>=x & x>2.1, -5/3*(-x+5)-18,2<x & x <=2.1,-835/3*x-68.5/3+584.5,2>x & x>1,-15 *(-x+1)-10,1>=x & x>=0,-(x - 1) - 10);
 y2_graph(x) = piecewise((-17.54/0.9)<=x & x<=-8 , -0.5 *(.9*x + 17.54).^2, -8<x & x<0, -0.6*(1.1*x + 7.5).^2 - 52.4438, 0<=x & x<8,-0.6*(-1.1*x + 7.5).^2 - 52.4438, (8<=x & x<=17.54/0.9), -0.5*(-.9*x + 17.54).^2);
-phi(1:7)=phi(1:7)+pi;
-phi(:7)=phi(1:7)+pi;
 
 figure(1)
 hold on
@@ -176,7 +174,7 @@ if(shape=='batman')
     h(2) = fplot(y1_graph(x), [-17.54/0.9,17.54/0.9], 'black','DisplayName','Exact Shape');
     h(3) = plot(X,Y,'r','DisplayName','Panel approximation');
     h(4) = plot(midpoint_x,midpoint_y,'g^','DisplayName','Control Points');
-    h(5) = quiver(midpoint_x,midpoint_y,V.*cos(phi+alpha),V.*sin(phi+alpha),'DisplayName','Velocity at the surface');
+    % h(5) = quiver(midpoint_x,midpoint_y,V.*cos(phi+alpha),V.*sin(phi+alpha),'DisplayName','Velocity at the surface');
 else
     ang=0:0.01:2*pi; 
     cir_x=R*cos(ang);
@@ -184,11 +182,11 @@ else
     h(2) = plot(cir_y, cir_x, 'black','DisplayName','Exact Shape');
     h(3) = plot(X,Y,'r','DisplayName','Panel approximation');
     h(4) = plot(midpoint_x,midpoint_y,'g^','DisplayName','Control Points');
-
+    % h(5) = quiver(midpoint_x,midpoint_y,V.*cos(phi+alpha),V.*sin(phi+alpha),'DisplayName','Velocity at the surface');
 end
 grid on;
 grid minor;
-legend(h(2:5));
+legend(h(2:4));
 
 % Cp variation plot by source panel method
 figure(2)
