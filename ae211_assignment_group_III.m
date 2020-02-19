@@ -1,6 +1,6 @@
 %% Source & Vortex Panel Method for Batman Knife Shape & Cylinder
 % (https://www.throwninjastar.com/wp-content/uploads/2017/04/batman-throwing-star.jpg)
-%% Copyright: Apurva Nandan, Parag Sonkusare, Devendra Kharolia, Rahul Baudhh, Pranay Agrawal, Dr. Bilal A. Siddiqui & Deepak Prem
+%% Copyright: Apurva Nandan, Parag Sonkusare, Devendra Kharolia, Rahul Thakkar, Pranay Agrawal, Dr. Bilal A. Siddiqui & Deepak Prem
 % MATLAB 2019a
 % Citation: Bilal Siddiqui (2020). Source Panel Method applied to Flow around Cylinder 
 %(https://www.mathworks.com/matlabcentral/fileexchange/56156-source-panel-method-applied-to-flow-around-cylinder),
